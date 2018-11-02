@@ -1,31 +1,74 @@
-// Derive the `fmt::Debug` implementation for `Structure`. `Structure`
-// is a structure which contains a single `i32`.
-#[derive(Debug)]
-struct Structure(i32);
+use std::fmt;
+// Tuples can be used as function arguments and as return values
+fn reverse(pair: (i32, bool)) -> (bool, i32) {
+    // `let` can be used to bind the members of a tuple to variables
+    let (integer, boolean) = pair;
 
-// Put a `Structure` inside of the structure `Deep`. Make it printable
-// also.
+    (boolean, integer)
+}
+
+fn transpose(mtx: Matrix) -> Matrix {
+    Matrix(mtx.0, mtx.2, mtx.1, mtx.3)
+}
+
+impl fmt::Display for Matrix {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "( {} {} )\n( {} {} )", self.0, self.1, self.2, self.3)
+    }
+}
+
+// The following struct is for the activity.
 #[derive(Debug)]
-struct Deep(Structure);
+struct Matrix(f32, f32, f32, f32);
 
 fn main() {
-    // Printing with `{:?}` is similar to with `{}`.
-    println!("{:?} months in a year.", 12);
-    println!("{1:?} {0:?} is the {actor:?} name.",
-             "Slater",
-             "Christian",
-             actor="actor's");
+    // A tuple with a bunch of different types
+    let long_tuple = (1u8, 2u16, 3u32, 4u64,
+                      -1i8, -2i16, -3i32, -4i64,
+                      0.1f32, 0.2f64,
+                      'a', true);
 
-    // `Structure` is printable!
-    println!("Now {:?} will print!", Structure(3));
+    // Values can be extracted from the tuple using tuple indexing
+    println!("long tuple first value: {}", long_tuple.0);
+    println!("long tuple second value: {}", long_tuple.1);
 
-    // The problem with `derive` is there is no control over how
-    // the results look. What if I want this to just show a `7`?
-    println!("Now {:?} will print!", Deep(Structure(7)));
+    // Tuples can be tuple members
+    let tuple_of_tuples = ((1u8, 2u16, 2u32), (4u64, -1i8), -2i16);
 
-    let z: i32 = 3;
-    let y: i32 = 2;
-    let x: f32 = z % y;
+    // Tuples are printable
+    println!("tuple of tuples: {:?}", tuple_of_tuples);
 
-    println!("{:32}", x);
+    // But long Tuples cannot be printed
+    //let too_long_tuple = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+    //println!("too long tuple: {:?}", too_long_tuple);
+    // TODO ^ Uncomment the above 2 lines to see the compiler error
+
+    let pair = (1, true);
+    println!("pair is {:?}", pair);
+
+    println!("the reversed pair is {:?}", reverse(pair));
+
+    // To create one element tuples, the comma is required to tell them apart
+    // from a literal surrounded by parentheses
+    println!("one element tuple: {:?}", (5u32,));
+    println!("just an integer: {:?}", (5u32));
+
+    //tuples can be destructured to create bindings
+    let tuple = (1, "hello", 4.5, true);
+
+    let (a, b, c, d) = tuple;
+    println!("{:?}, {:?}, {:?}, {:?}", a, b, c, d);
+
+    let matrix = Matrix(1.1, 1.2, 2.1, 2.2);
+    println!("{:?}", matrix);
+
+    println!("Matrix:\n{}", matrix);
+    println!("Transpose:\n{}", transpose(matrix));
+    // Should obtain
+    // Matrix:
+    // ( 1.1 1.2 )
+    // ( 2.1 2.2 )
+    // Transpose:
+    // ( 1.1 2.1 )
+    // ( 1.2 2.2 )
 }
